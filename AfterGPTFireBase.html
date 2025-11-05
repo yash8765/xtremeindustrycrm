@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Xtreme Industries CRM</title>
+<style>
+  :root{
+    --bg:#0b1020;
+    --card:#121a2f;
+    --muted:#8aa0c7;
+    --text:#e9eefc;
+    --accent:#4f8cff;
+    --accent-2:#12c29f;
+    --danger:#ff6b6b;
+    --warn:#ffb020;
+    --ok:#4cd66d;
+    --border:#233155;
+    --shadow: 0 10px 30px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Arial}
+  a{color:var(--accent)}
+  button{cursor:pointer}
+  .app{display:grid;grid-template-columns:280px 1fr;height:100%}
+  .sidebar{
+    background:linear-gradient(180deg,#0c1328,#0b1020 50%,#0b1020);
+    border-right:1px solid var(--border);
+    padding:18px 12px;
+  }
+  .logo{
+    display:flex;align-items:center;gap:10px;margin-bottom:18px;padding-bottom:12px;border-bottom:1px dashed var(--border)
+  }
+  .logo img{width:40px;height:40px;object-fit:contain;border-radius:8px;background:#0a0f1f}
+  .brand{font-weight:700;letter-spacing:.2px}
+  .nav{display:flex;flex-direction:column;gap:6px}
+  .nav button{
+    background:transparent;border:1px solid transparent;color:var(--text);text-align:left;padding:10px 12px;border-radius:10px
+  }
+  .nav button.active{background:var(--card);border-color:var(--border)}
+  .nav .sep{margin:10px 0;border-bottom:1px dashed var(--border)}
+  .role-tag{color:var(--muted);font-size:12px;margin-left:auto}
+  .userbox{
+    margin-top:16px;padding:10px;border:1px solid var(--border);border-radius:12px;background:#0c1429
+  }
+  .main{
+    padding:18px;overflow:auto
+  }
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:18px;
+    box-shadow:var(--shadow);
+    padding:16px;margin-bottom:16px
+  }
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .grid-auto{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .grow{flex:1}
+  .muted{color:var(--muted)}
+  .ok{color:var(--ok)}
+  .warn{color:var(--warn)}
+  .danger{color:var(--danger)}
+  .input, select, textarea{
+    width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--border);
+    background:#0c1429;color:var(--text);outline:none
+  }
+  textarea{min-height:90px}
+  .btn{
+    padding:10px 14px;border-radius:10px;border:1px solid var(--border);background:#0c1429;color:var(--text)
+  }
+  .btn.primary{background:var(--accent);border-color:#2f65d8;color:#fff}
+  .btn.good{background:var(--accent-2);border-color:#0ea789;color:#041316}
+  .btn.warn{background:var(--warn);border-color:#d99016;color:#161003}
+  .btn.danger{background:var(--danger);border-color:#e35656;color:#160707}
+  .btn.ghost{background:transparent}
+  .table{
+    width:100%;border-collapse:collapse;border:1px solid var(--border);border-radius:12px;overflow:hidden
+  }
+  .table th,.table td{padding:10px;border-bottom:1px solid var(--border);text-align:left}
+  .table th{background:#0c1429;color:#cbd6f2;font-weight:600}
+  .badge{padding:4px 8px;border-radius:16px;font-size:12px;background:#0c1429;border:1px solid var(--border)}
+  .status-open{background:#133a7c;color:#cfe3ff;border-color:#2f65d8}
+  .status-won{background:#0d3c2f;color:#b9f5e7;border-color:#0ea789}
+  .status-lost{background:#3c1010;color:#ffd3d3;border-color:#e35656}
+  .hidden{display:none !important}
+  .sticky-actions{position:sticky;bottom:0;background:linear-gradient(180deg,transparent 0,#121a2f 24px,#121a2f);padding-top:16px}
+  .kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .kpi .item{background:#0c1429;border:1px solid var(--border);border-radius:12px;padding:12px}
+  .kpi .item .title{color:#a9b8dc;font-size:12px}
+  .kpi .item .value{font-size:20px;font-weight:700;margin-top:6px}
+  .tag{border:1px solid var(--border);background:#0c1429;color:#cbd6f2;border-radius:999px;padding:4px 10px;font-size:12px}
+  .hr{border-bottom:1px dashed var(--border);margin:10px 0}
+  .pill{padding:6px 10px;border-radius:999px;background:#0c1429;border:1px solid var(--border);font-size:12px;color:#cbd6f2}
+  .headerline{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+  .headerline h2{margin:0;font-size:20px}
+  .sub{color:#a9b8dc;font-size:13px}
+  .file{display:inline-flex;align-items:center;gap:8px}
+  .help{font-size:12px;color:#8aa0c7}
+  .print-area{background:#fff;color:#000;padding:18px}
+  .q-header{display:flex;justify-content:space-between;align-items:start}
+  .q-logo{height:48px}
+  .q-title{font-weight:800;font-size:16px}
+  .q-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+  .q-table{width:100%;border-collapse:collapse;margin-top:10px}
+  .q-table th,.q-table td{border:1px solid #333;padding:8px;text-align:left}
+  .t-right{text-align:right}
+  .no-wrap{white-space:nowrap}
+  .login{
+    max-width:460px;margin:12vh auto;background:var(--card);border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow);
+    padding:18px
+  }
+  .login h1{margin:0 0 8px}
+  .login .brandline{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .footer-note{color:#8aa0c7;font-size:12px;margin-top:8px}
+  .chip{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;border:1px solid var(--border);background:#0c1429;color:#cbd6f2}
+  .searchbar{display:flex;gap:8px}
+  .soft{color:#a9b8dc}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<section id="login" class="login">
+  <div class="brandline">
+    <img id="loginLogo" src="" alt="Logo" style="width:44px;height:44px;object-fit:contain;border-radius:8px;background:#0a0f1f;border:1px solid var(--border)" />
+    <div>
+      <h1>Xtreme Industries CRM</h1>
+      <div class="soft">Sign in with Employee ID (E10001–E10010). Default password equals the ID.</div>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div>
+      <label>Employee ID</label>
+      <input id="loginId" class="input" placeholder="E10001" />
+    </div>
+    <div>
+      <label>Password</label>
+      <input id="loginPw" type="password" class="input" placeholder="E10001" />
+    </div>
+  </div>
+  <div class="row" style="margin-top:10px">
+    <button class="btn primary" onclick="handleLogin()">Sign in</button>
+    <span class="muted">Admins: E10001, E10002</span>
+  </div>
+  <div class="footer-note">Tip: Add your logo after login (Admins). It appears in CRM header and PDFs.</div>
+</section>
+
+<!-- APP -->
+<section id="app" class="app hidden">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo">
+      <img id="crmLogo" src="" alt="Logo"/>
+      <div class="brand">
+        Xtreme Industries
+        <div id="roleLabel" class="role-tag"></div>
+      </div>
+    </div>
+    <div class="nav">
+      <button class="active" data-view="dashboard" onclick="switchView('dashboard')">Dashboard</button>
+      <button data-view="leads" onclick="switchView('leads')">Leads</button>
+      <button data-view="products" onclick="switchView('products')" id="navProducts">Products</button>
+      <button data-view="reports" onclick="switchView('reports')" id="navReports">Reports</button>
+      <div class="sep"></div>
+      <button data-view="settings" onclick="switchView('settings')" id="navSettings">Settings</button>
+      <button class="ghost" onclick="logout()">Sign out</button>
+    </div>
+
+    <div class="userbox">
+      <div><strong>User:</strong> <span id="userIdBox">-</span></div>
+      <div class="muted">Name: <span id="userNameBox">Not set</span></div>
+      <div class="muted">Mobile: <span id="userMobileBox">Not set</span></div>
+      <div class="hr"></div>
+      <div class="help">Employees can view product list. Admin-only controls are hidden for others.</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <!-- DASHBOARD -->
+    <section id="view-dashboard" class="card">
+      <div class="headerline">
+        <h2>Dashboard</h2><span class="sub">Quick snapshot</span>
+        <div class="row">
+  <!-- Quick Dashboard (already exists) -->
+
+  <!-- Daily Dashboard -->
+  <div class="card" style="flex:1; margin:8px;">
+    <h3>Daily Dashboard</h3>
+    <canvas id="dailyChart" height="120"></canvas>
+  </div>
+
+  <!-- Weekly Dashboard -->
+  <div class="card" style="flex:1; margin:8px;">
+    <h3>Weekly Dashboard</h3>
+    <canvas id="weeklyChart" height="120"></canvas>
+  </div>
+</div>
+      </div>
+      <div class="kpi">
+        <div class="item"><div class="title">Open leads</div><div id="kpiOpen" class="value">0</div></div>
+        <div class="item"><div class="title">Visits</div><div id="kpiVisits" class="value">0</div></div>
+        <div class="item"><div class="title">Quotations</div><div id="kpiQuotes" class="value">0</div></div>
+        <div class="item"><div class="title">Bills</div><div id="kpiBills" class="value">0</div></div>
+      </div>
+      <div class="hr"></div>
+      <div class="grid-auto">
+        <div class="card">
+          <div class="headerline"><h3 style="margin:0">Recent leads</h3></div>
+          <table class="table" id="recentLeadsTable">
+            <thead><tr><th>Lead ID</th><th>Company</th><th>Lead</th><th>Status</th><th>Owner</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="card">
+          <div class="headerline"><h3 style="margin:0">Activity</h3></div>
+          <div id="recentActivity" class="muted">No activity yet.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LEADS -->
+    <section id="view-leads" class="card hidden">
+      <div class="headerline">
+        <h2>Leads</h2><span class="sub">Add, track, and progress leads</span>
+      </div>
+
+      <div class="card">
+        <div class="headerline"><h3 style="margin:0">New lead</h3></div>
+        <div class="grid-3">
+          <div><label>Lead name</label><input id="leadName" class="input" /></div>
+          <div><label>Company</label><input id="leadCompany" class="input" /></div>
+          <div><label>Mobile</label><input id="leadMobile" class="input" /></div>
+          <div><label>Alternate Contact</label><input id="leadAltMobile" class="input" /></div>
+          <div><label>Sales person</label>
+            <select id="leadSalesPerson" class="input"></select>
+          </div>
+          <div><label>Product interest</label>
+            <select id="leadProduct" class="input"></select>
+          </div>
+          <div style="grid-column:1/-1"><label>Address</label><textarea id="leadAddress" class="input"></textarea></div>
+          <div style="grid-column:1/-1"><label>Remarks</label><textarea id="leadRemarks" class="input" placeholder="Initial remarks"></textarea></div>
+          <div><label>Status</label>
+            <select id="leadStatus" class="input">
+              <option>Open</option><option>In progress</option><option>Quoted</option><option>Won</option><option>Lost</option>
+            </select>
+          </div>
+          <div><label>Employee ID (creator)</label>
+            <input id="leadOwner" class="input" disabled />
+          </div>
+        </div>
+        <div class="sticky-actions row">
+          <button class="btn primary" onclick="createLead()">Create lead</button>
+          <span class="help">Dates auto-generated. Status & remarks editable by all employees.</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="row" style="justify-content:space-between">
+          <div class="searchbar grow">
+            <input id="leadSearch" class="input" placeholder="Search lead, company, mobile, status..." oninput="currentPage=1;renderLeads()" />
+            <select id="leadStatusFilter" class="input" style="max-width:220px" onchange="currentPage=1;renderLeads()">
+              <option value="">All statuses</option>
+              <option>Open</option><option>In progress</option><option>Quoted</option><option>Won</option><option>Lost</option>
+            </select>
+          </div>
+          <div class="row">
+            <span class="chip"><span class="muted">Sort:</span>
+              <select id="leadSort" class="input" style="width:auto" onchange="currentPage=1;renderLeads()">
+                <option value="mod">Last modified</option>
+                <option value="gen">Date created</option>
+                <option value="name">Lead name</option>
+              </select>
+            </span>
+          </div>
+        </div>
+        <div class="row" style="justify-content:space-between; margin:8px 0;">
+          <div class="grow"></div>
+          <div class="row">
+            <button class="btn" onclick="prevPage()">Prev</button>
+            <span id="pageInfo" style="padding:0 12px;display:inline-flex;align-items:center"></span>
+            <button class="btn" onclick="nextPage()">Next</button>
+          </div>
+        </div>
+        <table class="table" id="leadsTable">
+  <thead>
+    <tr>
+      <th>Lead ID</th><th>Company</th><th>Name</th><th>Mobile</th>
+      <th>Status</th><th>Owner</th><th>Action</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+      </div>
+
+      <!-- Lead drawer -->
+      <div id="leadDrawer" class="card hidden">
+        <div class="headerline">
+          <h3 id="leadDrawerTitle" style="margin:0"></h3>
+          <span class="sub" id="leadDrawerSub"></span>
+        </div>
+        <div class="grid-3">
+          <div><label>Status</label>
+            <select id="drawerStatus" class="input"></select>
+          </div>
+          <div style="grid-column:1/-1"><label>Remarks</label>
+            <textarea id="drawerRemarks" class="input"></textarea>
+          </div>
+        </div>
+        <div class="row sticky-actions">
+          <button class="btn primary" onclick="saveLeadBasics()">Save</button>
+          <button class="btn ghost" onclick="closeLeadDrawer()">Close</button>
+          <span class="help">All employees can edit status & remarks. Admins see full change log.</span>
+        </div>
+
+        <div class="hr"></div>
+        <div class="row">
+          <span class="pill">Lead sub-pages</span>
+          <button class="btn" onclick="openLeadSub('visit')">Visit</button>
+          <button class="btn" onclick="openLeadSub('quote')">Quotation</button>
+          <!-- <button class="btn" onclick="openLeadSub('bill')">Final bill</button> -->
+    .   </div>
+
+        <!-- VISITS -->
+        <div id="visitPanel" class="card hidden">
+          <div class="headerline"><h3 style="margin:0">Visit section</h3></div>
+          <div class="grid-3">
+            <div><label>Visit number</label><input id="visitNo" class="input" /></div>
+            <div><label>Date of visit</label><input id="visitDate" type="date" class="input" /></div>
+            <div><label>Sales person</label><input id="visitSales" class="input" /></div>
+          </div>
+          <div class="hr"></div>
+          <div class="grid-auto">
+            <div>
+              <label>Product</label>
+              <select id="visitProduct" class="input"></select>
+            </div>
+            <div>
+              <label>Quantity</label>
+              <input id="visitQty" type="number" min="1" class="input" />
+            </div>
+            <div>
+              <label>Status</label>
+              <select id="visitStatus" class="input">
+                <option>Scheduled</option><option>Visited</option><option>Follow-up</option><option>Closed</option>
+              </select>
+            </div>
+            <div style="grid-column:1/-1">
+              <label>Remark</label>
+              <textarea id="visitRemark" class="input"></textarea>
+            </div>
+          </div>
+          <div class="sticky-actions row">
+            <button class="btn primary" onclick="addVisit()">Add visit</button>
+          </div>
+          <table class="table" id="visitTable">
+            <thead><tr><th>#</th><th>Date</th><th>Product</th><th>Qty</th><th>Sales</th><th>Status</th><th>Remark</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <!-- QUOTATION -->
+        <div id="quotePanel" class="card hidden">
+          <div class="headerline"><h3 style="margin:0">Quotation</h3></div>
+          <div class="row">
+            <button class="btn" onclick="addQuoteRow()">Add product row</button>
+            <button class="btn warn" onclick="addMiscRow()">Add miscellaneous row</button>
+            <button class="btn good" onclick="generateQuotation()">Generate PDF</button>
+          </div>
+          <div class="hr"></div>
+          <div class="grid-3">
+            <div><label>Quotation ID</label><input id="quoteId" class="input" /></div>
+            <div><label>Valid till (date)</label><input id="quoteValid" type="date" class="input" /></div>
+            <div><label>Tax % (per row default)</label><input id="quoteTaxDefault" type="number" class="input" value="18" /></div>
+          </div>
+          <div class="hr"></div>
+          <table class="table" id="quoteRows">
+            <thead>
+              <tr>
+                <th>#</th><th>Product ID</th><th>Product name</th><th>Specification</th>
+                <th>Qty</th><th>Rate</th><th>Tax %</th><th>Discount %</th><th>Line total</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <div class="row" style="justify-content:flex-end">
+            <span class="chip">Final quotation amount: <strong id="quoteTotal">0</strong></span>
+          </div>
+        </div>
+
+        <!-- BILLING -->
+        <div id="billPanel" class="card hidden">
+          <div class="headerline"><h3 style="margin:0">Final bill</h3></div>
+          <div class="grid-3">
+            <div><label>Bill date</label><input id="billDate" type="date" class="input" /></div>
+            <div><label>Employee ID (creator)</label><input id="billOwner" class="input" disabled /></div>
+            <div><label>Sales person</label><input id="billSales" class="input" /></div>
+            <div><label>Lead name</label><input id="billLeadName" class="input" disabled /></div>
+            <div><label>Mobile</label><input id="billMobile" class="input" disabled /></div>
+            <div><label>Quotation ref</label><input id="billQuoteRef" class="input" /></div>
+            <div><label>Final bill amount</label><input id="billAmount" type="number" class="input" /></div>
+            <div><label>Payment status</label>
+              <select id="billPayStatus" class="input"><option>Unpaid</option><option>Partial</option><option>Paid</option></select>
+            </div>
+            <div><label>Advance received</label><input id="billAdvance" type="number" class="input" value="0" /></div>
+            <div><label>Pending</label><input id="billPending" type="number" class="input" value="0" disabled /></div>
+            <div><label>Delivery status</label>
+              <select id="billDelivery" class="input"><option>Pending</option><option>Shipped</option><option>Delivered</option></select>
+            </div>
+          </div>
+          <div class="sticky-actions row">
+            <button class="btn primary" onclick="saveFinalBill()">Save bill</button>
+          </div>
+          <table class="table" id="billTable">
+            <thead><tr><th>Date</th><th>Owner</th><th>Sales</th><th>Quote ref</th><th>Amount</th><th>Advance</th><th>Pending</th><th>Pay status</th><th>Delivery</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <!-- ADMIN LOG -->
+        <div id="logPanel" class="card hidden">
+          <div class="headerline"><h3 style="margin:0">Change log</h3><span class="sub">Admins only</span></div>
+          <table class="table" id="logTable">
+            <thead><tr><th>Time</th><th>Employee</th><th>Field</th><th>Old</th><th>New</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRODUCTS -->
+    <section id="view-products" class="card hidden">
+      <div class="headerline">
+        <h2>Products</h2><span class="sub">Catalog (admins can add/edit)</span>
+      </div>
+      <div id="adminProductPanel" class="card hidden">
+        <div class="row">
+          <h3 style="margin:0">Add product</h3>
+          <span class="pill">Admins only</span>
+        </div>
+        <div class="grid-3">
+          <div><label>Product ID</label><input id="prodId" class="input" /></div>
+          <div><label>Product name</label><input id="prodName" class="input" /></div>
+          <div><label>Price</label><input id="prodPrice" type="number" class="input" /></div>
+          <div style="grid-column:1/-1"><label>Specifications</label><textarea id="prodSpec" class="input"></textarea></div>
+          <div><label>Min discount %</label><input id="prodMin" type="number" class="input" value="0" /></div>
+          <div><label>Max discount %</label><input id="prodMax" type="number" class="input" value="20" /></div>
+        </div>
+        <div class="sticky-actions row">
+          <button class="btn primary" onclick="addProduct()">Add to catalog</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="row" style="justify-content:space-between">
+          <div class="searchbar grow">
+            <input id="prodSearch" class="input" placeholder="Search products..." oninput="renderProducts()" />
+          </div>
+          <div class="row">
+            <span class="chip">Total: <strong id="prodCount">0</strong></span>
+          </div>
+        </div>
+        <table class="table" id="productsTable">
+          <thead><tr><th>Product ID</th><th>Name</th><th>Price</th><th>Min%</th><th>Max%</th><th>Spec</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- REPORTS -->
+    <section id="view-reports" class="card hidden">
+      <div class="headerline">
+        <h2>Reports</h2><span class="sub">Export to Excel (CSV)</span>
+      </div>
+      <div class="grid-3">
+        <div class="card">
+          <h3 style="margin:0">Leads</h3>
+          <div class="grid-2">
+            <div><label>Range</label>
+              <select id="leadRange" class="input">
+                <option>Daily</option><option>Weekly</option><option>Monthly</option><option>All</option>
+              </select>
+            </div>
+            <div><label>Lead ID (optional)</label><input id="leadReportId" class="input" placeholder="e.g., L-0001" /></div>
+          </div>
+          <div class="row sticky-actions">
+            <button class="btn primary" onclick="exportLeads()">Export CSV</button>
+          </div>
+        </div>
+        <div class="card">
+          <h3 style="margin:0">Quotations</h3>
+          <div class="grid-2">
+            <div><label>Range</label>
+              <select id="quoteRange" class="input">
+                <option>Daily</option><option>Weekly</option><option>Monthly</option><option>All</option>
+              </select>
+            </div>
+            <div><label>Lead ID (optional)</label><input id="quoteReportId" class="input" /></div>
+          </div>
+          <div class="row sticky-actions">
+            <button class="btn primary" onclick="exportQuotes()">Export CSV</button>
+          </div>
+        </div>
+        <div class="card">
+          <h3 style="margin:0">Bills</h3>
+          <div class="grid-2">
+            <div><label>Range</label>
+              <select id="billRange" class="input">
+                <option>Daily</option><option>Weekly</option><option>Monthly</option><option>All</option>
+              </select>
+            </div>
+            <div><label>Lead ID (optional)</label><input id="billReportId" class="input" /></div>
+          </div>
+          <div class="row sticky-actions">
+            <button class="btn primary" onclick="exportBills()">Export CSV</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section id="view-settings" class="card hidden">
+      <div class="headerline">
+        <h2>Settings</h2><span class="sub">Admin management</span>
+      </div>
+      <div class="card">
+        <h3 style="margin:0">Company logo</h3>
+        <div class="row">
+          <img id="logoPreview" src="" alt="Logo" style="width:80px;height:80px;border-radius:12px;object-fit:contain;background:#0a0f1f;border:1px solid var(--border)" />
+          <label class="file btn">
+            <input id="logoFile" type="file" accept="image/*" onchange="uploadLogo()" style="display:none" />
+            <span>Upload / change logo</span>
+          </label>
+        </div>
+        <div class="hr"></div>
+        <div class="grid-3">
+          <div><label>Employee ID</label><input id="empIdSet" class="input" placeholder="E10001" /></div>
+          <div><label>Employee name</label><input id="empNameSet" class="input" /></div>
+          <div><label>Mobile number</label><input id="empMobileSet" class="input" /></div>
+        </div>
+        <div class="sticky-actions row">
+          <button class="btn primary" onclick="setEmployeeMeta()">Add / edit employee meta</button>
+        </div>
+        <div class="help">Admins can manage names and mobiles for all employee IDs. Logo appears in CRM, quotations, and bills.</div>
+      </div>
+    </section>
+  </main>
+</section>
+
+<!-- QUOTATION PRINT VIEW (hidden) -->
+<div id="printFrame" class="hidden">
+  <div class="print-area" id="printArea">
+    <!-- populated dynamically -->
+  </div>
+</div>
+
+<!-- External libs -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<script>
+/* ========= FIREBASE CONFIG ========= */
+const firebaseConfig = {
+  apiKey: "AIzaSyCMQlEK7lw3nfllOJHv1NC2aKxwNpizetg",
+  authDomain: "xtrem-de86d.firebaseapp.com",
+  projectId: "xtrem-de86d",
+  storageBucket: "xtrem-de86d.firebasestorage.app",
+  messagingSenderId: "1831704854",
+  appId: "1:1831704854:web:a3617c7a7d2552fc37d837"
+};
+
+// Initialize Firebase (compat for simple migration)
+const fbApp = firebase.initializeApp(firebaseConfig);
+const firestore = firebase.firestore();
+
+// Enable offline persistence (with basic error handling)
+firestore.enablePersistence().catch((err) => {
+  console.warn('Firestore persistence error', err);
+});
+
+/* ========= GLOBALS AND HELPERS ========= */
+let currentPage = 1;
+const pageSize = 10; // show 10 leads per page
+
+const EMP_IDS = Array.from({length:10}, (_,i)=>`E${(10001+i).toString()}`);
+const ADMINS = new Set(['E10001','E10002']);
+const IT_USERS = new Set(['E10008','E10009','E10010']);
+const SOL_USERS = new Set(['E10003','E10004','E10005','E10006','E10007']);
+
+const FIRM_INFO = `705,7th Floor,Mega Mall,
+The Mall,Kanpur – 208001 
+GSTIN : 09AOLPD7063B1Z3`;
+const QUOTE_NOTE = `Bank Details:
+Xtreme Industries
+Indian Overseas Bank 
+A/c No - 32333300000031 
+IFSC - IOBN003233`;
+const QUOTE_TERMS =`Terms & Conditions: 
+1. Payment: 100% Against Delivery 
+2. Quotation Validity Seven Days   
+3. Delivery Within 3 Days After Confirmation 
+4. Order To Be Placed On Xtreme Industries`;
+const QUOTE_AUTH = `
+
+
+
+Authorized Signature`;
+
+/* simple in-memory cache to reduce reads and enable realtime UI updates */
+const CACHE = {
+  products: [],
+  leads: [],
+  visits: {},
+  quotes: {},
+  bills: {},
+  logs: {},
+  employees: {},
+  activity: []
+};
+
+/* localStorage key for fallback */
+const LOCAL_STATE_KEY = 'xtreme_crm_state_v1';
+
+/* tiny utility: safe parse float */
+function safeNum(v, fallback=0){ const n = parseFloat(v); return Number.isFinite(n) ? n : fallback; }
+function nowISO(){return new Date().toISOString()}
+function todayStr(){const d=new Date();return d.toISOString().slice(0,10)}
+function uid(prefix){const n=Math.random().toString(36).slice(2,8).toUpperCase();return `${prefix}-${n}`}
+
+/* formatting helpers */
+function fmtMoney(n){return `₹${(Number(n)||0).toLocaleString('en-IN',{maximumFractionDigits:2})}`}
+function fmtDate(iso){
+  try{
+    const d = new Date(iso);
+    const dd = d.toLocaleDateString('en-IN',{year:'numeric',month:'short',day:'2-digit'});
+    const tt = d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+    return `${dd} ${tt}`;
+  }catch(e){return iso}
+}
+
+/* ========= FIRESTORE LOAD / SAVE with fallback to localStorage =========
+   - We use a top-level document "crm/state" to store compact snapshot (for quick reads/writes)
+   - Core collections also stored as separate collections for realtime listeners:
+     - products, leads, visits, quotes, bills, logs, employees, activity
+*/
+async function loadState() {
+  try {
+    // attempt to read compact state doc
+    const doc = await firestore.collection('crm').doc('state').get();
+    if (doc.exists) {
+      const data = doc.data();
+      // hydrate CACHE for UI usage
+      CACHE.products = data.products || [];
+      CACHE.leads = data.leads || [];
+      CACHE.visits = data.visits || {};
+      CACHE.quotes = data.quotes || {};
+      CACHE.bills = data.bills || {};
+      CACHE.logs = data.logs || {};
+      CACHE.employees = data.employees || {};
+      CACHE.activity = data.activity || [];
+      // persist snapshot locally as fallback
+      try { localStorage.setItem(LOCAL_STATE_KEY, JSON.stringify(data)); } catch(e){}
+      return data;
+    } else {
+      // No state doc; try localStorage fallback
+      const raw = localStorage.getItem(LOCAL_STATE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        // write to Firestore state doc so others can see
+        await firestore.collection('crm').doc('state').set(parsed).catch(()=>{});
+        // hydrate cache
+        CACHE.products = parsed.products || [];
+        CACHE.leads = parsed.leads || [];
+        CACHE.visits = parsed.visits || {};
+        CACHE.quotes = parsed.quotes || {};
+        CACHE.bills = parsed.bills || {};
+        CACHE.logs = parsed.logs || {};
+        CACHE.employees = parsed.employees || {};
+        CACHE.activity = parsed.activity || [];
+        return parsed;
+      } else {
+        // no local state either, create initial
+        const init = {
+          logo: '',
+          employees: Object.fromEntries(EMP_IDS.map(id=>[id,{id,name:'',mobile:''}])),
+          products: [
+            {id:'SOL-10K', name:'10kW Rooftop Solar', spec:'Mono PERC panels, string inverter', price:450000, min:0, max:10},
+            {id:'SOL-5K', name:'5kW Rooftop Solar', spec:'Poly panels, string inverter', price:240000, min:0, max:8},
+            {id:'IT-SRV1', name:'Rack Server R1', spec:'Xeon 8-core, 32GB RAM, 2x1TB SSD', price:185000, min:0, max:12},
+            {id:'IT-NB1', name:'Business Laptop L1', spec:'i7, 16GB, 512GB SSD, Win 11 Pro', price:78000, min:0, max:15}
+          ],
+          leads: [],
+          visits: {},
+          quotes: {},
+          bills: {},
+          logs: {},
+          activity: []
+        };
+        CACHE.products = init.products.slice();
+        CACHE.leads = [];
+        CACHE.visits = {};
+        CACHE.quotes = {};
+        CACHE.bills = {};
+        CACHE.logs = {};
+        CACHE.employees = init.employees;
+        CACHE.activity = [];
+        // write to firestore (best-effort)
+        await firestore.collection('crm').doc('state').set(init).catch(()=>{});
+        try { localStorage.setItem(LOCAL_STATE_KEY, JSON.stringify(init)); } catch(e){}
+        return init;
+      }
+    }
+  } catch (err) {
+    console.warn('loadState: Firestore read failed, falling back to localStorage', err);
+    const raw = localStorage.getItem(LOCAL_STATE_KEY);
+    if (raw) return JSON.parse(raw);
+    // final fallback: minimal init
+    const init = { logo:'', employees: Object.fromEntries(EMP_IDS.map(id=>[id,{id,name:'',mobile:''}])), products: [], leads:[], visits:{}, quotes:{}, bills:{}, logs:{}, activity:[]};
+    return init;
+  }
+}
+
+async function saveState(state) {
+  try {
+    // update compact doc
+    await firestore.collection('crm').doc('state').set(state);
+    try { localStorage.setItem(LOCAL_STATE_KEY, JSON.stringify(state)); } catch(e){}
+    return true;
+  } catch (err) {
+    console.warn('saveState: Firestore write failed, saving to localStorage as fallback', err);
+    try { localStorage.setItem(LOCAL_STATE_KEY, JSON.stringify(state)); return true; } catch(e){ return false; }
+  }
+}
+
+/* ========= REALTIME LISTENERS to keep CACHE in sync (and UI reactive) ========= */
+function startRealtimeListeners() {
+  // products
+  firestore.collection('products').onSnapshot(snapshot=>{
+    const prods = [];
+    snapshot.forEach(doc => prods.push(doc.data()));
+    CACHE.products = prods;
+    renderProducts();
+    renderProductDropdowns();
+  }, err => console.warn('products onSnapshot error', err));
+
+  // leads
+  firestore.collection('leads').onSnapshot(snapshot=>{
+    const leads = [];
+    snapshot.forEach(doc => leads.push(doc.data()));
+    // sort by dateModified desc
+    leads.sort((a,b)=> (b.dateModified||'').localeCompare(a.dateModified||''));
+    CACHE.leads = leads;
+    renderLeads();
+    renderDashboard();
+  }, err => console.warn('leads onSnapshot error', err));
+
+  // visits (small app; load on demand per lead)
+  firestore.collection('visits').onSnapshot(snapshot=>{
+    const visits = {};
+    snapshot.forEach(doc=>{
+      const d = doc.data();
+      if(!visits[d.leadId]) visits[d.leadId]=[];
+      visits[d.leadId].push(d);
+    });
+    CACHE.visits = visits;
+  }, err => console.warn('visits onSnapshot error', err));
+
+  // quotes
+  firestore.collection('quotes').onSnapshot(snapshot=>{
+    const quotes = {};
+    snapshot.forEach(doc=>{
+      const d = doc.data();
+      quotes[d.leadId] = d;
+    });
+    CACHE.quotes = quotes;
+    renderQuoteRows();
+  }, err => console.warn('quotes onSnapshot error', err));
+
+  // bills
+  firestore.collection('bills').onSnapshot(snapshot=>{
+    const bills = {};
+    snapshot.forEach(doc=>{
+      const d = doc.data();
+      if(!bills[d.leadId]) bills[d.leadId]=[];
+      bills[d.leadId].push(d);
+    });
+    CACHE.bills = bills;
+    renderBills();
+  }, err => console.warn('bills onSnapshot error', err));
+
+  // employees
+  firestore.collection('employees').onSnapshot(snapshot=>{
+    const emps = {};
+    snapshot.forEach(doc=>emps[doc.id] = doc.data());
+    CACHE.employees = emps;
+  }, err => console.warn('employees onSnapshot error', err));
+
+  // activity (small)
+  firestore.collection('activity').orderBy('time','desc').limit(50).onSnapshot(snapshot=>{
+    const act = [];
+    snapshot.forEach(doc=>act.push(doc.data().text));
+    CACHE.activity = act;
+    const box = document.getElementById('recentActivity');
+    box.innerHTML = act.length ? act.map(x=>`<div>${x}</div>`).join('') : 'No activity yet.';
+  }, err => console.warn('activity onSnapshot error', err));
+}
+
+/* ========= SHORT UTILS FOR FIRESTORE DOCUMENT WRITES ========= */
+async function addActivity(text) {
+  const rec = { time: nowISO(), text };
+  try {
+    await firestore.collection('activity').add(rec);
+  } catch(e) {
+    // fallback store in compact state
+    try {
+      const state = await loadState();
+      state.activity = state.activity || [];
+      state.activity.push(`[${fmtDate(nowISO())}] ${text}`);
+      await saveState(state);
+    } catch(e2){ console.warn('addActivity fallback failed', e2) }
+  }
+}
+
+/* ========= INITIALIZATION: hydrate state and start listeners ========= */
+let currentUser = null;
+(async function bootstrap(){
+  // hydrate initial state (prefill CACHE)
+  await loadState();
+  // start realtime listeners (best-effort)
+  startRealtimeListeners();
+  // UI login logo
+  document.getElementById('loginLogo').src = (CACHE && CACHE.employees && CACHE.employees['E10001'] && '') || '';
+})();
+
+/* ========= CORE APP LOGIC (only edited key functions; most original flows preserved) ========= */
+
+/* NAV */
+function switchView(view){
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active', b.dataset.view===view));
+  document.querySelectorAll('[id^="view-"]').forEach(v=>v.classList.add('hidden'));
+  document.getElementById(`view-${view}`).classList.remove('hidden');
+}
+
+/* AUTH */
+async function handleLogin(){
+  const id = (document.getElementById('loginId').value||'').trim().toUpperCase();
+  const pw = document.getElementById('loginPw').value||'';
+  if(!EMP_IDS.includes(id)){alert('Invalid Employee ID');return}
+  if(pw !== id){alert('Incorrect password');return}
+  currentUser = {id, isAdmin: ADMINS.has(id)};
+  const state = await loadState();
+  // UI init
+  document.getElementById('login').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+  document.getElementById('roleLabel').textContent = currentUser.isAdmin?'Admin':'Employee';
+  document.getElementById('userIdBox').textContent = id;
+  const meta = (state.employees && state.employees[id]) || (CACHE.employees && CACHE.employees[id]) || {name:'',mobile:''};
+  document.getElementById('userNameBox').textContent = meta.name||'Not set';
+  document.getElementById('userMobileBox').textContent = meta.mobile||'Not set';
+  document.getElementById('leadOwner').value = id;
+  document.getElementById('billOwner').value = id;
+  // Admin-only nav
+  document.getElementById('navSettings').classList.toggle('hidden', !currentUser.isAdmin);
+  document.getElementById('navProducts').classList.toggle('hidden', false); // visible to all
+  document.getElementById('navReports').classList.toggle('hidden', !currentUser.isAdmin);
+  // Admin-only panels
+  document.getElementById('adminProductPanel').classList.toggle('hidden', !currentUser.isAdmin);
+
+  // Logo (if stored in state doc)
+  const logoData = state.logo || '';
+  if(logoData){
+    document.getElementById('crmLogo').src = logoData;
+    document.getElementById('loginLogo').src = logoData;
+    document.getElementById('logoPreview').src = logoData;
+  } else {
+    // if not in compact doc, try CACHE employees (no-op)
+  }
+
+  // Fill sales person dropdown with employees
+  const sp = document.getElementById('leadSalesPerson');
+  sp.innerHTML = '';
+  const employeesSource = (state.employees && Object.values(state.employees)) || Object.values(CACHE.employees || {});
+  EMP_IDS.forEach(e=>{
+    const name = (state.employees && state.employees[e]?.name) || (CACHE.employees && CACHE.employees[e]?.name) || e;
+    const opt = document.createElement('option');
+    opt.value = name;
+    opt.textContent = `${name}`;
+    sp.appendChild(opt);
+  });
+
+  // Product dropdowns & dashboard
+  renderProductDropdowns();
+  renderDashboard();
+  renderLeads();
+  renderProducts();
+
+  // start listeners if not started
+  // (already started in bootstrap)
+}
+
+function logout(){
+  currentUser = null;
+  document.getElementById('app').classList.add('hidden');
+  document.getElementById('login').classList.remove('hidden');
+}
+
+/* ========= PRODUCTS (fixed addProduct to use state properly) ========= */
+async function addProduct(){
+  if(!currentUser?.isAdmin){alert('Admin only');return}
+  // prefer writing to products collection for realtime updates
+  const id = (document.getElementById('prodId').value||'').trim().toUpperCase();
+  const name = (document.getElementById('prodName').value||'').trim();
+  const price = safeNum(document.getElementById('prodPrice').value||'0', 0);
+  const spec = (document.getElementById('prodSpec').value||'').trim();
+  const min = safeNum(document.getElementById('prodMin').value||'0', 0);
+  const max = safeNum(document.getElementById('prodMax').value||'0', 0);
+  if(!id || !name){alert('Product ID and name required');return}
+
+  try {
+    // write to Firestore products collection (doc id = product id)
+    await firestore.collection('products').doc(id).set({ id, name, price, spec, min, max });
+    addActivity(`Product ${id} saved by ${currentUser.id}`);
+    alert('Product saved');
+  } catch(err){
+    console.warn('addProduct firestore error, falling back to compact state', err);
+    // fallback: modify compact state
+    const state = await loadState();
+    const exists = (state.products||[]).find(p=>p.id===id);
+    if(exists) Object.assign(exists,{name,price,spec,min,max});
+    else state.products.push({id,name,price,spec,min,max});
+    await saveState(state);
+    renderProducts();
+    renderProductDropdowns();
+    addActivity(`Product ${id} saved by ${currentUser.id} (fallback)`);
+    alert('Product saved (offline fallback)');
+  }
+}
+
+/* PRODUCTS render and dropdowns (defensive guards) */
+function renderProducts(){
+  const q = (document.getElementById('prodSearch').value||'').toLowerCase();
+  // use CACHE.products (realtime listener keeps it current)
+  const list = (CACHE.products || []).filter(p=>{
+    return [p.id,p.name,p.spec,(p.price||'')].join(' ').toLowerCase().includes(q);
+  });
+  const tbody = document.querySelector('#productsTable tbody');
+  tbody.innerHTML='';
+  list.forEach(p=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${p.id}</td>
+      <td>${p.name}</td>
+      <td>${fmtMoney(p.price)}</td>
+      <td>${p.min}%</td>
+      <td>${p.max}%</td>
+      <td>${p.spec}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+  document.getElementById('prodCount').textContent = list.length;
+}
+
+function getVisibleProducts(){
+  // central helper used by productOptions
+  const all = CACHE.products || [];
+  if(!currentUser) return all;
+  if(currentUser.isAdmin) return all;
+  if(IT_USERS.has(currentUser.id)) return all.filter(p=>p.id.startsWith('IT'));
+  if(SOL_USERS.has(currentUser.id)) return all.filter(p=>p.id.startsWith('SOL'));
+  return [];
+}
+
+function renderProductDropdowns(){
+  // populate leadProduct and visitProduct selects
+  const ddIds = ['leadProduct','visitProduct'];
+  const visibleProducts = getVisibleProducts();
+  ddIds.forEach(id=>{
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.innerHTML = '';
+    visibleProducts.forEach(p=>{
+      const opt = document.createElement('option');
+      opt.value = p.id;
+      opt.textContent = `${p.name} (${p.id})`;
+      el.appendChild(opt);
+    });
+  });
+}
+
+function productOptions(selectedId){
+  const visibleProducts = getVisibleProducts();
+  return visibleProducts
+    .map(p=>`<option value="${p.id}" ${p.id===selectedId?'selected':''}>${p.name} (${p.id})</option>`)
+    .join('');
+}
+
+/* ========= LEADS ========= */
+async function createLead(){
+  const name = (document.getElementById('leadName').value||'').trim();
+  const company = (document.getElementById('leadCompany').value||'').trim();
+  const mobile = (document.getElementById('leadMobile').value||'').trim();
+  const altMobile = (document.getElementById('leadAltMobile').value||'').trim();
+  const address = (document.getElementById('leadAddress').value||'').trim();
+  const productInterestId = document.getElementById('leadProduct').value;
+  const remarks = (document.getElementById('leadRemarks').value||'').trim();
+  const status = document.getElementById('leadStatus').value;
+  const owner = document.getElementById('leadOwner').value;
+
+  if(!name || !company || !mobile){alert('Lead name, company, and mobile are required');return}
+  const leadId = uid('L');
+  const genDate = nowISO();
+  const productName = (CACHE.products.find(p=>p.id===productInterestId)?.name) || productInterestId;
+
+  const lead = {
+    id: leadId,
+    name, company, mobile, altMobile, address,
+    dateCreated: genDate, dateModified: genDate,
+    ownerId: owner,
+    salesPerson: document.getElementById('leadSalesPerson').value,
+    productInterestId, productInterestName: productName,
+    status, remarks
+  };
+
+  try {
+    await firestore.collection('leads').doc(leadId).set(lead);
+    // also write a compact state snapshot (optional) to keep compact doc current
+    const state = await loadState();
+    state.leads = [lead, ...(state.leads||[])];
+    await saveState(state);
+    addLog(state, leadId, 'Create lead', '', JSON.stringify({status,remarks}), owner);
+    addActivity(`Lead ${leadId} created by ${owner}`);
+    renderLeads();
+    renderDashboard();
+    alert('Lead created');
+  } catch(err){
+    console.warn('createLead firestore error, falling back to compact state', err);
+    const state = await loadState();
+    state.leads.push(lead);
+    state.visits[leadId]=[];
+    state.quotes[leadId]={quoteId:'', validTill:'', rows:[], total:0, created:genDate, modified:genDate};
+    state.bills[leadId]=[];
+    state.logs[leadId]=[];
+    await saveState(state);
+    addLog(state, leadId, 'Create lead', '', JSON.stringify({status,remarks}), owner);
+    addActivity(`Lead ${leadId} created by ${owner} (fallback)`);
+    renderLeads();
+    renderDashboard();
+    alert('Lead created (offline fallback)');
+  }
+}
+
+function renderLeads(){
+  // use CACHE.leads (keeps UI reactive)
+  const stateLeads = CACHE.leads || [];
+  const q = (document.getElementById('leadSearch')?.value||'').toLowerCase();
+  const statusFilter = document.getElementById('leadStatusFilter')?.value || '';
+  const sortBy = document.getElementById('leadSort')?.value || 'mod';
+  let list = stateLeads.filter(l=>{
+    const matches = [l.id,l.company,l.name,l.mobile,l.status,l.ownerId,(l.salesPerson||'')].join(' ').toLowerCase().includes(q);
+    return matches && (!statusFilter || l.status===statusFilter);
+  });
+  list.sort((a,b)=>{
+    if(sortBy==='name') return a.name.localeCompare(b.name);
+    if(sortBy==='gen') return (b.dateCreated||'').localeCompare(a.dateCreated||'');
+    return (b.dateModified||'').localeCompare(a.dateModified||'');
+  });
+
+  // Pagination
+  const totalPages = Math.ceil(list.length / pageSize) || 1;
+  if(currentPage > totalPages) currentPage = totalPages || 1;
+  const start = (currentPage-1)*pageSize;
+  const end = start + pageSize;
+  const pageItems = list.slice(start, end);
+
+  // Render only the current page in leads table
+  const tbody = document.querySelector('#leadsTable tbody');
+  tbody.innerHTML='';
+  pageItems.forEach(l=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML = `
+      <td>${l.id}</td>
+      <td>${l.company}</td>
+      <td>${l.name}</td>
+      <td>${l.mobile}</td>
+      <td>${l.status}</td>
+      <td>${l.ownerId}</td>
+      <td><button class="btn" onclick="openLead('${l.id}')">Open</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  // Update page info
+  const pageInfoEl = document.getElementById('pageInfo');
+  if(pageInfoEl) {
+    pageInfoEl.textContent = `Page ${currentPage} of ${totalPages} (${list.length} total)`;
+  }
+
+  // Recent table on dashboard
+  const rtbody = document.querySelector('#recentLeadsTable tbody');
+  if(rtbody) {
+    rtbody.innerHTML = '';
+    (CACHE.leads || []).slice(-5).reverse().forEach(l=>{
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${l.id}</td>
+        <td>${l.company}</td>
+        <td>${l.name}</td>
+        <td>${l.status}</td>
+        <td>${l.ownerId}</td>
+      `;
+      rtbody.appendChild(tr);
+    });
+  }
+}
+
+/* openLead, saveLeadBasics unchanged except using CACHE/state where needed */
+async function openLead(id){
+  switchView('leads');
+  openLeadId = id;
+  // prefer CACHE
+  const l = (CACHE.leads || []).find(x=>x.id===id) || (await loadState()).leads.find(x=>x.id===id);
+  if(!l){ alert('Lead not found'); return; }
+  const title = `${l.company} — ${l.name} (${l.id})`;
+  document.getElementById('leadDrawerTitle').textContent = title;
+  document.getElementById('leadDrawerSub').textContent = `Owner: ${l.ownerId} | Sales: ${l.salesPerson} | Mobile: ${l.mobile}`;
+  document.getElementById('leadDrawer').classList.remove('hidden');
+
+  // status & remarks
+  const ds = document.getElementById('drawerStatus');
+  ds.innerHTML = '';
+  ['Open','In progress','Quoted','Won','Lost'].forEach(s=>{
+    const opt=document.createElement('option');opt.value=s;opt.textContent=s;ds.appendChild(opt);
+  });
+  ds.value = l.status;
+  document.getElementById('drawerRemarks').value = l.remarks||'';
+
+  // Pre-fill subpanels context
+  document.getElementById('visitSales').value = l.salesPerson||'';
+  document.getElementById('visitDate').value = todayStr();
+
+  // Quote defaults (use CACHE.quotes if available)
+  document.getElementById('quoteId').value = (CACHE.quotes && CACHE.quotes[id]?.quoteId) || uid('Q');
+  document.getElementById('quoteValid').value = (CACHE.quotes && CACHE.quotes[id]?.validTill) || todayStr();
+  document.getElementById('quoteTaxDefault').value = 18;
+  renderQuoteRows();
+
+  // Bill defaults
+  document.getElementById('billDate').value = todayStr();
+  document.getElementById('billSales').value = l.salesPerson||'';
+  document.getElementById('billLeadName').value = l.name||'';
+  document.getElementById('billMobile').value = l.mobile||'';
+  document.getElementById('billQuoteRef').value = (CACHE.quotes && CACHE.quotes[id]?.quoteId) || '';
+  renderBills();
+
+  // Visits
+  renderVisits();
+
+  // Admin log
+  document.getElementById('logPanel').classList.toggle('hidden', !currentUser?.isAdmin);
+  renderLog();
+}
+
+async function saveLeadBasics(){
+  if(!openLeadId) return;
+  // update lead in firestore and compact state
+  const state = await loadState();
+  const leadIndex = (state.leads||[]).findIndex(l=>l.id===openLeadId);
+  if(leadIndex === -1){ alert('Lead not found'); return; }
+  const lead = state.leads[leadIndex];
+  const old = {status:lead.status,remarks:lead.remarks};
+  const newStatus = document.getElementById('drawerStatus').value;
+  const newRemarks = document.getElementById('drawerRemarks').value;
+  lead.status = newStatus;
+  lead.remarks = newRemarks;
+  lead.dateModified = nowISO();
+  try {
+    await firestore.collection('leads').doc(openLeadId).update(lead);
+    await addLog(state, openLeadId, 'Edit lead', JSON.stringify(old), JSON.stringify({status:newStatus,remarks:newRemarks}), currentUser.id);
+    await addActivity(`Lead ${openLeadId} updated by ${currentUser.id}`);
+    // update compact state snapshot
+    state.leads[leadIndex] = lead;
+    await saveState(state);
+    renderLeads();
+    renderDashboard();
+    renderLog();
+    alert('Saved');
+  } catch(err){
+    console.warn('saveLeadBasics firestore update failed, applying fallback', err);
+    state.leads[leadIndex] = lead;
+    await saveState(state);
+    addLog(state, openLeadId, 'Edit lead (fallback)', JSON.stringify(old), JSON.stringify({status:newStatus,remarks:newRemarks}), currentUser.id);
+    addActivity(`Lead ${openLeadId} updated by ${currentUser.id} (fallback)`);
+    renderLeads();
+    renderDashboard();
+    renderLog();
+    alert('Saved (offline fallback)');
+  }
+}
+
+/* ========= VISITS, QUOTES, BILLS, LOGS - use CACHE and Firestore (kept mostly as before, with DB writes) ========= */
+
+async function addVisit(){
+  if(!openLeadId) return;
+  const v = {
+    id: uid('V'),
+    leadId: openLeadId,
+    no: (document.getElementById('visitNo').value||'').trim() || `${((CACHE.visits[openLeadId]||[]).length||0)+1}`,
+    date: document.getElementById('visitDate').value || todayStr(),
+    productId: document.getElementById('visitProduct').value,
+    productName: ((CACHE.products||[]).find(p=>p.id===document.getElementById('visitProduct').value)?.name) || document.getElementById('visitProduct').value,
+    qty: parseInt(document.getElementById('visitQty').value||'1'),
+    sales: document.getElementById('visitSales').value,
+    status: document.getElementById('visitStatus').value,
+    remark: document.getElementById('visitRemark').value||''
+  };
+  try {
+    await firestore.collection('visits').add(v);
+    addActivity(`Visit added for ${openLeadId} by ${currentUser.id}`);
+    renderVisits();
+    renderDashboard();
+  } catch(err){
+    console.warn('addVisit failed, falling back', err);
+    const state = await loadState();
+    state.visits[openLeadId] = state.visits[openLeadId] || [];
+    state.visits[openLeadId].push(v);
+    await saveState(state);
+    addActivity(`Visit added for ${openLeadId} by ${currentUser.id} (fallback)`);
+    renderVisits(); renderDashboard();
+  }
+}
+
+function renderVisits(){
+  if(!openLeadId) return;
+  const visitsForLead = (CACHE.visits && CACHE.visits[openLeadId]) || [];
+  const tbody = document.querySelector('#visitTable tbody');
+  tbody.innerHTML='';
+  (visitsForLead||[]).forEach((v,i)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML = `<td>${v.no||i+1}</td><td>${v.date}</td><td>${v.productName} (${v.productId})</td><td>${v.qty}</td><td>${v.sales}</td><td>${v.status}</td><td>${v.remark}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+/* QUOTES: store per-lead quote doc in quotes collection (doc id = leadId) */
+async function addQuoteRow(){
+  if(!openLeadId) return;
+  try {
+    const qdoc = (CACHE.quotes && CACHE.quotes[openLeadId]) || { leadId: openLeadId, rows: [] };
+    qdoc.rows = qdoc.rows || [];
+    qdoc.rows.push({type:'catalog', productId:'', productName:'', spec:'', qty:1, rate:0, tax:safeNum(document.getElementById('quoteTaxDefault').value||'18',18), discount:0});
+    await firestore.collection('quotes').doc(openLeadId).set(qdoc);
+    renderQuoteRows();
+  } catch(err){
+    console.warn('addQuoteRow error', err);
+    const state = await loadState();
+    state.quotes[openLeadId] = state.quotes[openLeadId] || {rows:[]};
+    state.quotes[openLeadId].rows.push({type:'catalog', productId:'', productName:'', spec:'', qty:1, rate:0, tax:18, discount:0});
+    await saveState(state);
+    renderQuoteRows();
+  }
+}
+async function addMiscRow(){
+  if(!openLeadId) return;
+  try {
+    const qdoc = (CACHE.quotes && CACHE.quotes[openLeadId]) || { leadId: openLeadId, rows: [] };
+    qdoc.rows = qdoc.rows || [];
+    qdoc.rows.push({type:'misc', productId:'MISC', productName:'Misc item', spec:'Custom', qty:1, rate:0, tax:safeNum(document.getElementById('quoteTaxDefault').value||'18',18), discount:0});
+    await firestore.collection('quotes').doc(openLeadId).set(qdoc);
+    renderQuoteRows();
+  } catch(err){
+    console.warn('addMiscRow error', err);
+    const state = await loadState();
+    state.quotes[openLeadId] = state.quotes[openLeadId] || {rows:[]};
+    state.quotes[openLeadId].rows.push({type:'misc', productId:'MISC', productName:'Misc item', spec:'Custom', qty:1, rate:0, tax:18, discount:0});
+    await saveState(state);
+    renderQuoteRows();
+  }
+}
+
+function calcLine(r){
+  const base = (r.qty||1) * (r.rate||0);
+  const disc = base * (r.discount||0)/100;
+  const sub = base - disc;
+  const taxAmt = sub * (r.tax||0)/100;
+  return sub + taxAmt;
+}
+
+function renderQuoteRows(){
+  if(!openLeadId) return;
+  const q = (CACHE.quotes && CACHE.quotes[openLeadId]) || {rows:[]};
+  const tbody = document.querySelector('#quoteRows tbody');
+  tbody.innerHTML='';
+  q.rows.forEach((r,idx)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML = `
+      <td>${idx+1}</td>
+      <td>${r.type==='catalog'
+          ? `<input class="input" value="${r.productId||''}" oninput="onQuotePid(${idx},this.value)" placeholder="e.g., SOL-10K" />`
+          : `<span class="muted">MISC</span>`}</td>
+      <td>${r.type==='catalog'
+          ? `<select class="input" onchange="onQuoteSelect(${idx},this.value)">${productOptions(r.productId)}</select>`
+          : `<input class="input" value="${r.productName||'Misc item'}" oninput="onQuoteName(${idx},this.value)" />`}</td>
+      <td><textarea class="input" oninput="onQuoteSpec(${idx},this.value)">${r.spec||''}</textarea></td>
+      <td><input type="number" min="1" class="input" value="${r.qty||1}" oninput="onQuoteQty(${idx},this.value)" /></td>
+      <td><input type="number" class="input" value="${r.rate||0}" oninput="onQuoteRate(${idx},this.value)" /></td>
+      <td><input type="number" class="input" value="${r.tax||0}" oninput="onQuoteTax(${idx},this.value)" /></td>
+      <td><input type="number" class="input" value="${r.discount||0}" oninput="onQuoteDiscount(${idx},this.value)" /></td>
+      <td class="no-wrap">${fmtMoney(calcLine(r))}</td>
+      <td><button class="btn danger" onclick="removeQuoteRow(${idx})">Remove</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+  const total = (q.rows||[]).reduce((sum,r)=>sum+calcLine(r),0);
+  // update compact cache then UI
+  if(!CACHE.quotes) CACHE.quotes = {};
+  CACHE.quotes[openLeadId] = Object.assign({}, q, { total });
+  document.getElementById('quoteTotal').textContent = fmtMoney(total);
+}
+
+/* Quote helpers that write back to Firestore (or compact state fallback) */
+async function onQuoteSelect(idx,pid){
+  if(!openLeadId) return;
+  // role-based check
+  if(!currentUser?.isAdmin){
+    if(IT_USERS.has(currentUser.id) && !pid.startsWith('IT')){ alert('You are only allowed to add IT products'); return; }
+    if(SOL_USERS.has(currentUser.id) && !pid.startsWith('SOL')){ alert('You are only allowed to add SOL products'); return; }
+  }
+  try {
+    const qdoc = (CACHE.quotes && CACHE.quotes[openLeadId]) || { leadId: openLeadId, rows: [] };
+    const p = (CACHE.products||[]).find(x=>x.id===pid);
+    if(p){
+      qdoc.rows[idx].productId = p.id;
+      qdoc.rows[idx].productName = p.name;
+      qdoc.rows[idx].spec = p.spec;
+      qdoc.rows[idx].rate = p.price;
+    }
+    await firestore.collection('quotes').doc(openLeadId).set(qdoc);
+    renderQuoteRows();
+  } catch(err){
+    console.warn('onQuoteSelect error', err);
+    const state = await loadState();
+    const q = state.quotes[openLeadId] || { rows: [] };
+    const p = (state.products||[]).find(x=>x.id===pid);
+    if(p) {
+      q.rows[idx].productId = p.id;
+      q.rows[idx].productName = p.name;
+      q.rows[idx].spec = p.spec;
+      q.rows[idx].rate = p.price;
+    }
+    state.quotes[openLeadId] = q;
+    await saveState(state);
+    renderQuoteRows();
+  }
+}
+
+async function onQuotePid(idx,val){
+  if(!openLeadId) return;
+  const pid = (val||'').toUpperCase();
+  // role-based check
+  if(!currentUser?.isAdmin){
+    if(IT_USERS.has(currentUser.id) && !pid.startsWith('IT')){ alert('You are only allowed to add IT products'); return; }
+    if(SOL_USERS.has(currentUser.id) && !pid.startsWith('SOL')){ alert('You are only allowed to add SOL products'); return; }
+  }
+  try {
+    const qdoc = (CACHE.quotes && CACHE.quotes[openLeadId]) || { leadId: openLeadId, rows: [] };
+    const p = (CACHE.products||[]).find(x=>x.id===pid);
+    if(p){
+      qdoc.rows[idx].productId = p.id;
+      qdoc.rows[idx].productName = p.name;
+      qdoc.rows[idx].spec = p.spec;
+      qdoc.rows[idx].rate = p.price;
+    } else {
+      qdoc.rows[idx].productId = pid;
+    }
+    await firestore.collection('quotes').doc(openLeadId).set(qdoc);
+    renderQuoteRows();
+  } catch(err){
+    console.warn('onQuotePid error', err);
+    const state = await loadState();
+    const q = state.quotes[openLeadId] || { rows: [] };
+    const p = (state.products||[]).find(x=>x.id===pid);
+    if(p){
+      q.rows[idx].productId = p.id; q.rows[idx].productName = p.name; q.rows[idx].spec
